@@ -1,20 +1,15 @@
-from members import Member
 import json
+from .members import Member
 
 class Group:
     def __init__(self, id: int, title: str, description: str, members: list[Member]):
-        self.__id = 0
-        self.__title = ""
-        self.__description = ""
-        self.__members = []
-
-        self.set_id(id)
-        self.set_title(title)
-        self.set_description(description)
-        self.set_members(members)
+        self.__id = id
+        self.__title = title
+        self.__description = description
+        self.__members = members
 
     def __str__(self):
-        return f'Group: {self.title}'
+        return f'Group: {self.__title}'
 
     @property
     def id(self):
@@ -36,6 +31,7 @@ class Group:
         if not (isinstance(id, int) and id > 0):
             raise ValueError('ID precisa ser um inteiro positivo.')
         self.__id = id
+        self.save()
 
     def set_title(self, title: str):
         if not (isinstance(title, str) and len(title) > 0):
@@ -43,11 +39,13 @@ class Group:
         if len(title) > 50:
             raise ValueError('Título precisa ter no máximo 50 caracteres.')
         self.__title = title
+        self.save()
 
     def set_description(self, description: str):
         if not (isinstance(description, str) and len(description) <= 255):
             raise ValueError('Descrição precisa ter no máximo 255 caracteres.')
         self.__description = description
+        self.save()
 
     def set_members(self, members: list[Member]):
         if not isinstance(members, list):
@@ -57,21 +55,28 @@ class Group:
         if not all(isinstance(member, Member) for member in members):
             raise ValueError('Os membros devem ser uma lista de objetos Member.')
         self.__members = members
+        self.save()
 
     def insert_member(self, member: Member):
+        self.open()
         self.__members.append(member)
+        self.save()
 
     def list_members(self):
+        self.open()
         return self.__members
 
     def remove_member(self, id: int):
+        self.open()
         self.__members = [member for member in self.__members if member.id != id]
+        self.save()
 
     def update_member(self, id: int, member: Member):
         for i in range(len(self.__members)):
             if self.__members[i].id == id:
                 self.__members[i] = member
                 break
+        self.save()
 
     def get_member_by_id(self, id: int):
         for member in self.__members:
@@ -126,22 +131,26 @@ class Groups:
     @classmethod
     @property
     def groups(cls):
+        cls.open()
         return cls.__groups
 
     @classmethod
     def add_group(cls, group: Group):
         cls.__groups.append(group)
+        cls.save()
 
     @classmethod
     def delete_group(cls, id: int):
         cls.__groups = [group for group in cls.__groups if group.id != id]
-
+        cls.save()
+        
     @classmethod
     def update_group(cls, id: int, group: Group):
         for i in range(len(cls.__groups)):
             if cls.__groups[i].id == id:
                 cls.__groups[i] = group
                 break
+        cls.save()
 
     @classmethod
     def get_group_by_id(cls, id: int):
@@ -157,7 +166,7 @@ class Groups:
             with open('./data/groups.json', 'r') as file:
                 data = json.load(file)
                 for group in data:
-                    cls.add_group(Group(**group))
+                    cls.__groups.append(Group(**group))
         except FileNotFoundError:
             pass
 
