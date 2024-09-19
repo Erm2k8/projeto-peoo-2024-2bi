@@ -1,20 +1,14 @@
 [
     {
-        "id": 1,
-        "title": "Galations de Macaiba",
-        "description": "hahahahaha",
-        "members": []
-    },
-    {
-        "id": 2,
-        "title": "Os Guri",
-        "description": "bla",
-        "members": []
-    },
-    {
         "id": 3,
-        "title": "INFOWEB",
-        "description": "Bacana demais",
+        "title": "Amantes de PEOO",
+        "description": "N\u00e3o gostamos tanto de PEOO mas \u00e9 bacana",
+        "members": []
+    },
+    {
+        "id": 4,
+        "title": "Amantes de Design",
+        "description": "amamos design",
         "members": []
     }
 ]

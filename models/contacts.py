@@ -82,14 +82,17 @@ class Contacts:
     @classmethod
     def create_contact(cls, contact: Contact):
         cls.open()
-        contact.set_id(len(cls.__contacts) + 1)
-        cls.__contacts.append(contact)
+        if cls.__contacts:
+            contact.set_id(max([int(c['id']) for c in cls.__contacts]) + 1)
+        else:
+            contact.set_id(1)
+        cls.__contacts.append(contact.to_dict())
         cls.save()
 
     @classmethod
     def delete_contact(cls, id: int):
         cls.open()
-        cls.__contacts = [contact for contact in cls.__contacts if contact.id != id]
+        cls.__contacts = [contact for contact in cls.__contacts if contact['id'] != id]
         cls.save()
         
     @classmethod
@@ -101,8 +104,8 @@ class Contacts:
     def update_contact(cls, contact: Contact):
         cls.open()
         for i in range(len(cls.__contacts)):
-            if cls.__contacts[i].id == contact.id:
-                cls.__contacts[i] = contact
+            if cls.__contacts[i]['id'] == contact.id:
+                cls.__contacts[i] = contact.to_dict()
                 break
         cls.save()
         
@@ -110,7 +113,7 @@ class Contacts:
     def search_contact(cls, id: int):
         cls.open()
         for contact in cls.__contacts:
-            if contact.id == id:
+            if contact['id'] == id:
                 return contact
         return None
     
@@ -118,14 +121,14 @@ class Contacts:
     def open(cls):
         try:
             with open('./data/contacts.json', 'r') as file:
-                cls.__contacts = [Contact(**contact) for contact in json.load(file)]
+                cls.__contacts = json.load(file)
         except FileNotFoundError:
             cls.__contacts = []
 
     @classmethod
     def save(cls):
         with open('./data/contacts.json', 'w') as file:
-            json.dump([contact.to_dict() for contact in cls.__contacts], file, indent=4)
+            json.dump(cls.__contacts, file, indent=4)
 
     def __str__(self):
         return f'Contacts: {self.__contacts}'

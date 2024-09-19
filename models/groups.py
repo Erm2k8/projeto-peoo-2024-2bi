@@ -1,5 +1,5 @@
 import json
-from .members import Member
+from .members import Member, Permissions
 
 class Group:
     def __init__(self, id: int, title: str, description: str, members: list[Member] = None):
@@ -59,7 +59,10 @@ class Group:
 
     def insert_member(self, member: Member):
         self.open()
-        member.set_id(len(self.__members) + 1)
+        if self.__members:
+            member.set_id(max([member.id for member in self.__members]) + 1)
+        else:
+            member.set_id(1)
         self.__members.append(member)
         self.save()
 
@@ -74,16 +77,15 @@ class Group:
 
     def update_member(self, id: int, member: Member):
         for i in range(len(self.__members)):
-            if self.__members[i]['id'] == id:
-                self.__members[i]['username'] = member.username
-                self.__members[i]['id_group'] = member.id_group 
+            if self.__members[i].id == id:
+                self.__members[i] = member
                 break
         self.save()
 
     def get_member_by_id(self, id: int):
         for member in self.__members:
-            if member['id'] == id:
-                return f"ID do contato: {member['id_contact']}, username: {member['username']}"
+            if member.id == id:
+                return member
         return None
 
     def open(self):
@@ -94,12 +96,13 @@ class Group:
                     if group['id'] == self.__id:
                         self.__title = group['title']
                         self.__description = group['description']
-                        self.__members = [Member(id=member['id'],
+                        self.__members = [Member(
+                            id=member['id'],
                             username=member['username'],
-                            id_group=member['id_group'],  
+                            id_group=member['id_group'],
                             id_contact=member['id_contact'],
-                            permissions=member['permissions'])
-                            for member in group['members']]
+                            permissions=Permissions(member['permissions'])
+                        ) for member in group['members']]
                         break
         except FileNotFoundError:
             pass
@@ -116,7 +119,7 @@ class Group:
             if group['id'] == self.__id:
                 group['title'] = self.__title
                 group['description'] = self.__description
-                group['members'] = [member for member in self.__members]
+                group['members'] = [member.to_dict() for member in self.__members]
                 group_found = True
                 break
 
@@ -144,7 +147,10 @@ class Groups:
     @classmethod
     def add_group(cls, group: Group):
         cls.open()
-        group.set_id(len(cls.__groups) + 1)
+        if cls.__groups:
+            group.set_id(max([group.id for group in cls.__groups]) + 1)
+        else:
+            group.set_id(1)
         cls.__groups.append(group)
         cls.save()
 
@@ -153,7 +159,7 @@ class Groups:
         cls.open()
         cls.__groups = [group for group in cls.__groups if group.id != id]
         cls.save()
-        
+
     @classmethod
     def update_group(cls, id: int, group: Group):
         cls.open()
@@ -178,7 +184,18 @@ class Groups:
             with open('./data/groups.json', 'r') as file:
                 data = json.load(file)
                 for group in data:
-                    cls.__groups.append(Group(**group))
+                    cls.__groups.append(Group(
+                        id=group['id'],
+                        title=group['title'],
+                        description=group['description'],
+                        members=[Member(
+                            id=member['id'],
+                            username=member['username'],
+                            id_group=member['id_group'],
+                            id_contact=member['id_contact'],
+                            permissions=Permissions(member['permissions'])
+                        ) for member in group['members']]
+                    ))
         except FileNotFoundError:
             pass
 

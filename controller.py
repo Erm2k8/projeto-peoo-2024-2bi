@@ -44,40 +44,42 @@ class UI:
         while True:
             option = cls.menu()
             
-            match(option):
-                case 1:
+            match option:
+                case '1':
                     cls.create_contact()
-                case 2:
+                case '2':
                     cls.list_contacts()
-                case 3:
+                case '3':
                     cls.search_contact_by_id()
-                case 4:
+                case '4':
                     cls.update_contact()
-                case 5:
+                case '5':
                     cls.delete_contact()
-                case 6:
+                case '6':
                     cls.add_group()
-                case 7:
+                case '7':
                     cls.list_groups()
-                case 8:
+                case '8':
                     cls.search_group_by_id()
-                case 9:
+                case '9':
                     cls.update_group()
-                case 10:
+                case '10':
                     cls.delete_group()
-                case 11:
+                case '11':
                     cls.insert_member()
-                case 12:
+                case '12':
                     cls.list_members()
-                case 13:
+                case '13':
                     cls.search_member_by_id()
-                case 14:
+                case '14':
                     cls.update_member()
-                case 15:
+                case '15':
                     cls.delete_member()
-                case 16:
+                case '16':
                     print(f"{cls.bold_yellow}Saindo...")
                     exit()
+                case _:
+                    print(f"\n{cls.italic_red}Opção inválida\n")
     
     @classmethod
     def menu(cls):
@@ -102,13 +104,11 @@ class UI:
         print()
         option = input(f"{cls.bold_blue}Escreva aqui: {cls.bold_white}")
         
-        os.system('cls')
-        
-        return int(option)
+        # os.system('cls' if os.name == 'nt' else 'clear')
+        return option
                 
     @classmethod
     def create_contact(cls):
-        # email, nome, phone
         print("="*30)
         print(f"{cls.bold_yellow}Criar contato\n")
         name = input(f"{cls.bold_green}Nome: {cls.bold_white}")
@@ -116,7 +116,6 @@ class UI:
         phone = input(f"{cls.bold_green}Telefone: {cls.bold_white}")
         
         Views.create_contact(name, email, phone)
-        
     
     @classmethod
     def list_contacts(cls):
@@ -130,34 +129,46 @@ class UI:
     def search_contact_by_id(cls):
         print("="*30)
         print(f"{cls.bold_yellow}Buscar contato\n")
-        id = int(input(f"{cls.bold_green}ID: {cls.bold_white}"))
-        contact = Views.search_contact_by_id(id)
-        print(f"{cls.bold_white}{contact}")
+        try:
+            id = int(input(f"{cls.bold_green}ID: {cls.bold_white}"))
+            contact = Views.search_contact_by_id(id)
+            if contact:
+                print(f"{cls.bold_white}{contact}")
+            else:
+                print(f"{cls.bold_white}Contato não encontrado")
+        except ValueError:
+            print(f"{cls.italic_red}ID inválido. Deve ser um número inteiro.")
     
     @classmethod
     def update_contact(cls):
         print("="*30)
         print(f"{cls.bold_yellow}Atualizar contato\n")
-        id = int(input(f"{cls.bold_green}ID: {cls.bold_white}"))
-        name = input(f"{cls.bold_green}Nome: {cls.bold_white}")
-        email = input(f"{cls.bold_green}E-mail: {cls.bold_white}")
-        phone = input(f"{cls.bold_green}Telefone: {cls.bold_white}")
-        
-        Views.update_contact(id, name, email, phone)
+        try:
+            id = int(input(f"{cls.bold_green}ID: {cls.bold_white}"))
+            name = input(f"{cls.bold_green}Nome: {cls.bold_white}")
+            email = input(f"{cls.bold_green}E-mail: {cls.bold_white}")
+            phone = input(f"{cls.bold_green}Telefone: {cls.bold_white}")
+            
+            Views.update_contact(id, name, email, phone)
+        except ValueError:
+            print(f"{cls.italic_red}ID inválido. Deve ser um número inteiro.")
     
     @classmethod
     def delete_contact(cls):
         print("="*30)
         print(f"{cls.bold_yellow}Deletar contato\n")
-        id = int(input(f"{cls.bold_green}ID: {cls.bold_white}"))
-        Views.delete_contact(id)
+        try:
+            id = int(input(f"{cls.bold_green}ID: {cls.bold_white}"))
+            Views.delete_contact(id)
+        except ValueError:
+            print(f"{cls.italic_red}ID inválido. Deve ser um número inteiro.")
     
     @classmethod
     def add_group(cls):
         print("="*30)
         print(f"{cls.bold_yellow}Inserir grupo\n")
         title = input(f"{cls.bold_green}Título: {cls.bold_white}")
-        description = input(f"{cls.bold_green}Descrição: {cls.bold_white}")
+        description = input(f"{cls.bold_green}Descrição: {cls.bold_white}")
         
         Views.add_group(title, description)
     
@@ -173,64 +184,80 @@ class UI:
     def search_group_by_id(cls):
         print("="*30)
         print(f"{cls.bold_yellow}Buscar grupo\n")
-        id = int(input(f"{cls.bold_green}Id do Grupo: {cls.bold_white}"))
-        group = Views.search_group_by_id(id)
-        if group:
-            print(f"{cls.bold_white}{group}")
-        else:
-            print(f"{cls.bold_white}Grupo não encontrado")
+        try:
+            id = int(input(f"{cls.bold_green}ID do Grupo: {cls.bold_white}"))
+            group = Views.search_group_by_id(id)
+            if group:
+                print(f"{cls.bold_white}{group}")
+            else:
+                print(f"{cls.bold_white}Grupo não encontrado")
+        except ValueError:
+            print(f"{cls.italic_red}ID inválido. Deve ser um número inteiro.")
     
     @classmethod
     def update_group(cls):
         cls.list_groups()
         print("="*30)
         print(f"{cls.bold_yellow}Atualizar grupo\n")
-        id = int(input(f"{cls.bold_green}ID: {cls.bold_white}"))
-        title = input(f"{cls.bold_green}Título: {cls.bold_white}")
-        description = input(f"{cls.bold_green}Descrição: {cls.bold_white}")
-        
-        Views.update_group(id, title, description)
+        try:
+            id = int(input(f"{cls.bold_green}ID: {cls.bold_white}"))
+            title = input(f"{cls.bold_green}Título: {cls.bold_white}")
+            description = input(f"{cls.bold_green}Descrição: {cls.bold_white}")
+            
+            Views.update_group(id, title, description)
+        except ValueError:
+            print(f"{cls.italic_red}ID inválido. Deve ser um número inteiro.")
     
     @classmethod
     def delete_group(cls):
         cls.list_groups()
         print("="*30)
         print(f"{cls.bold_yellow}Deletar grupo\n")
-        id = int(input(f"{cls.bold_green}ID: {cls.bold_white}"))
-        Views.delete_group(id)
+        try:
+            id = int(input(f"{cls.bold_green}ID: {cls.bold_white}"))
+            Views.delete_group(id)
+        except ValueError:
+            print(f"{cls.italic_red}ID inválido. Deve ser um número inteiro.")
     
     @classmethod
     def insert_member(cls):
         cls.list_groups()
         print("="*30)
         print(f"{cls.bold_yellow}Inserir membro\n")
-        group_id = int(input(f"{cls.bold_green}ID do grupo: {cls.bold_white}"))
-        cls.list_contacts()
-        contact_id = input(f"{cls.bold_green}ID do contato: {cls.bold_white}")
-        username = input(f"{cls.bold_green}Nome de usuário: {cls.bold_white}")
-        permissions = input(f"{cls.bold_green}Permissões (1 - Ler, 2 - Escrever, 3 - Ler e Escrever 4 - ADMIN): {cls.bold_white}")
-        
-        match (permissions):
-            case '1':
-                permissions = Permissions.READ
-            case '2':
-                permissions = Permissions.WRITE
-            case '3':
-                permissions = Permissions.READ | Permissions.WRITE
-            case '4':
-                permissions = Permissions.ADMIN
-            case _:
-                permissions = Permissions.READ
-        
-        Views.insert_member(username, group_id, contact_id, permissions)
-
+        try:
+            group_id = int(input(f"{cls.bold_green}ID do grupo: {cls.bold_white}"))
+            cls.list_contacts()
+            contact_id = int(input(f"{cls.bold_green}ID do contato: {cls.bold_white}"))
+            username = input(f"{cls.bold_green}Nome de usuário: {cls.bold_white}")
+            permissions = input(f"{cls.bold_green}Permissões (1 - Ler, 2 - Escrever, 3 - Ler e Escrever, 4 - ADMIN): {cls.bold_white}")
+            
+            match permissions:
+                case '1':
+                    permissions = Permissions.READ
+                case '2':
+                    permissions = Permissions.WRITE
+                case '3':
+                    permissions = Permissions.READ | Permissions.WRITE
+                case '4':
+                    permissions = Permissions.ADMIN
+                case _:
+                    permissions = Permissions.READ
+            
+            Views.insert_member(username, group_id, contact_id, permissions)
+        except ValueError:
+            print(f"{cls.italic_red}ID inválido. Deve ser um número inteiro.")
+    
     @classmethod
     def list_members(cls, group_id: int = 0):
         print("="*30)
         if group_id == 0:
             cls.list_groups()
             print()
-            group_id = int(input(f"{cls.bold_green}ID do grupo: {cls.bold_white}"))
+            try:
+                group_id = int(input(f"{cls.bold_green}ID do grupo: {cls.bold_white}"))
+            except ValueError:
+                print(f"{cls.italic_red}ID inválido. Deve ser um número inteiro.")
+                return
         print(f"{cls.bold_yellow}Listar membros\n")
         members = Views.list_members(group_id)
         for member in members:
@@ -242,10 +269,16 @@ class UI:
         cls.list_groups()
         print()
         print(f"{cls.bold_yellow}Buscar membro\n")
-        group_id = int(input(f"{cls.bold_green}ID do grupo: {cls.bold_white}"))
-        member_id = int(input(f"{cls.bold_green}ID do membro: {cls.bold_white}"))
-        member = Views.search_member_by_id(group_id, member_id)
-        print(f"{cls.bold_white}{member}")
+        try:
+            group_id = int(input(f"{cls.bold_green}ID do grupo: {cls.bold_white}"))
+            member_id = int(input(f"{cls.bold_green}ID do membro: {cls.bold_white}"))
+            member = Views.search_member_by_id(group_id, member_id)
+            if member:
+                print(f"{cls.bold_white}{member}")
+            else:
+                print(f"{cls.bold_white}Membro não encontrado")
+        except ValueError:
+            print(f"{cls.italic_red}IDs inválidos. Devem ser números inteiros.")
     
     @classmethod
     def update_member(cls):
@@ -253,26 +286,29 @@ class UI:
         cls.list_groups()
         print()
         print(f"{cls.bold_yellow}Atualizar membro\n")
-        group_id = int(input(f"{cls.bold_green}ID do grupo: {cls.bold_white}"))
-        cls.list_members(group_id)
-        print()
-        id = int(input(f"{cls.bold_green}ID do membro: {cls.bold_white}"))
-        username = input(f"{cls.bold_green}Nome de usuário: {cls.bold_white}")
-        permissions = input(f"{cls.bold_green}Permissões (1 - Ler, 2 - Escrever, 3 - Ler e Escrever 4 - ADMIN): {cls.bold_white}")
-        
-        match (permissions):
-            case '1':
-                permissions = Permissions.READ
-            case '2':
-                permissions = Permissions.WRITE
-            case '3':
-                permissions = Permissions.READ | Permissions.WRITE
-            case '4':
-                permissions = Permissions.ADMIN
-            case _:
-                permissions = Permissions.READ
-        
-        Views.update_member(group_id, id, username, permissions)
+        try:
+            group_id = int(input(f"{cls.bold_green}ID do grupo: {cls.bold_white}"))
+            cls.list_members(group_id)
+            print()
+            id = int(input(f"{cls.bold_green}ID do membro: {cls.bold_white}"))
+            username = input(f"{cls.bold_green}Nome de usuário: {cls.bold_white}")
+            permissions = input(f"{cls.bold_green}Permissões (1 - Ler, 2 - Escrever, 3 - Ler e Escrever, 4 - ADMIN): {cls.bold_white}")
+            
+            match permissions:
+                case '1':
+                    permissions = Permissions.READ
+                case '2':
+                    permissions = Permissions.WRITE
+                case '3':
+                    permissions = Permissions.READ | Permissions.WRITE
+                case '4':
+                    permissions = Permissions.ADMIN
+                case _:
+                    permissions = Permissions.READ
+            
+            Views.update_member(group_id, id, username, permissions)
+        except ValueError:
+            print(f"{cls.italic_red}IDs ou permissões inválidos.")
     
     @classmethod
     def delete_member(cls):
@@ -280,8 +316,11 @@ class UI:
         cls.list_groups()
         print()
         print(f"{cls.bold_yellow}Deletar membro\n")
-        group_id = int(input(f"{cls.bold_green}ID do grupo: {cls.bold_white}"))
-        cls.list_members(group_id)
-        print()
-        id = int(input(f"{cls.bold_green}ID do membro: {cls.bold_white}"))
-        Views.delete_member(group_id, id)
+        try:
+            group_id = int(input(f"{cls.bold_green}ID do grupo: {cls.bold_white}"))
+            cls.list_members(group_id)
+            print()
+            id = int(input(f"{cls.bold_green}ID do membro: {cls.bold_white}"))
+            Views.delete_member(group_id, id)
+        except ValueError:
+            print(f"{cls.italic_red}IDs inválidos. Devem ser números inteiros.")

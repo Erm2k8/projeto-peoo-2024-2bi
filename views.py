@@ -26,7 +26,7 @@ class Views:
         Contacts.delete_contact(id)
     
     @classmethod
-    def add_group(cls, title: str, description: str, ):
+    def add_group(cls, title: str, description: str):
         group = Group(0, title, description)
         Groups.add_group(group)
         
@@ -48,7 +48,7 @@ class Views:
         Groups.delete_group(id)
         
     @classmethod
-    def insert_member(cls, username: int, group_id: int, contact_id: int, permissions: Permissions):
+    def insert_member(cls, username: str, group_id: int, contact_id: int, permissions: Permissions):
         member = Member(0, username, group_id, contact_id, permissions)
         group = Groups.get_group_by_id(group_id)
         if group is not None:
@@ -68,10 +68,12 @@ class Views:
     
     @classmethod
     def update_member(cls, group_id: int, id: int, username: str, permissions: Permissions):
-        member = Member(id, username, group_id, 0, permissions)
         group = Groups.get_group_by_id(group_id)
         if group is not None:
-            group.update_member(id, member)
+            member = group.get_member_by_id(id)
+            if member is not None:
+                updated_member = Member(id, username, group_id, member.id_contact, permissions)
+                group.update_member(id, updated_member)
         
     @classmethod
     def delete_member(cls, group_id: int, id: int):
