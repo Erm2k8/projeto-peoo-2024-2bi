@@ -1,5 +1,6 @@
+from controller import UI
 def main():
-    pass
+    UI.main()
 
 if __name__ == '__main__':
     main()

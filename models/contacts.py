@@ -16,7 +16,7 @@ class Contact:
         self.set_phone(phone)
 
     def __str__(self):
-        return f'Contact: {self.__name}, ID: {self.__id}'
+        return f'Nome: {self.__name}, ID: {self.__id}'
 
     @property
     def id(self):
@@ -35,7 +35,7 @@ class Contact:
         return self.__phone
 
     def set_id(self, id: int):
-        if not (isinstance(id, int) and id > 0):
+        if not (isinstance(id, int) and id >= 0):
             raise ValueError('ID precisa ser um inteiro positivo.')
         self.__id = id
 
@@ -81,20 +81,25 @@ class Contacts:
 
     @classmethod
     def create_contact(cls, contact: Contact):
+        cls.open()
+        contact.set_id(len(cls.__contacts) + 1)
         cls.__contacts.append(contact)
         cls.save()
 
     @classmethod
     def delete_contact(cls, id: int):
+        cls.open()
         cls.__contacts = [contact for contact in cls.__contacts if contact.id != id]
         cls.save()
         
     @classmethod
     def list_contacts(cls):
+        cls.open()
         return cls.__contacts
     
     @classmethod
     def update_contact(cls, contact: Contact):
+        cls.open()
         for i in range(len(cls.__contacts)):
             if cls.__contacts[i].id == contact.id:
                 cls.__contacts[i] = contact
@@ -103,6 +108,7 @@ class Contacts:
         
     @classmethod
     def search_contact(cls, id: int):
+        cls.open()
         for contact in cls.__contacts:
             if contact.id == id:
                 return contact

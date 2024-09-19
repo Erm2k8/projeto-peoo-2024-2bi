@@ -2,14 +2,14 @@ import json
 from .members import Member
 
 class Group:
-    def __init__(self, id: int, title: str, description: str, members: list[Member]):
+    def __init__(self, id: int, title: str, description: str, members: list[Member] = None):
         self.__id = id
         self.__title = title
         self.__description = description
-        self.__members = members
+        self.__members = members if members is not None else []
 
     def __str__(self):
-        return f'Group: {self.__title}'
+        return f'ID: {self.__id}, Group: {self.__title}'
 
     @property
     def id(self):
@@ -59,6 +59,7 @@ class Group:
 
     def insert_member(self, member: Member):
         self.open()
+        member.set_id(len(self.__members) + 1)
         self.__members.append(member)
         self.save()
 
@@ -73,15 +74,16 @@ class Group:
 
     def update_member(self, id: int, member: Member):
         for i in range(len(self.__members)):
-            if self.__members[i].id == id:
-                self.__members[i] = member
+            if self.__members[i]['id'] == id:
+                self.__members[i]['username'] = member.username
+                self.__members[i]['id_group'] = member.id_group 
                 break
         self.save()
 
     def get_member_by_id(self, id: int):
         for member in self.__members:
-            if member.id == id:
-                return member
+            if member['id'] == id:
+                return f"ID do contato: {member['id_contact']}, username: {member['username']}"
         return None
 
     def open(self):
@@ -92,7 +94,12 @@ class Group:
                     if group['id'] == self.__id:
                         self.__title = group['title']
                         self.__description = group['description']
-                        self.__members = [Member(**member) for member in group['members']]
+                        self.__members = [Member(id=member['id'],
+                            username=member['username'],
+                            id_group=member['id_group'],  
+                            id_contact=member['id_contact'],
+                            permissions=member['permissions'])
+                            for member in group['members']]
                         break
         except FileNotFoundError:
             pass
@@ -109,7 +116,7 @@ class Group:
             if group['id'] == self.__id:
                 group['title'] = self.__title
                 group['description'] = self.__description
-                group['members'] = [member.to_dict() for member in self.__members]
+                group['members'] = [member for member in self.__members]
                 group_found = True
                 break
 
@@ -136,16 +143,20 @@ class Groups:
 
     @classmethod
     def add_group(cls, group: Group):
+        cls.open()
+        group.set_id(len(cls.__groups) + 1)
         cls.__groups.append(group)
         cls.save()
 
     @classmethod
     def delete_group(cls, id: int):
+        cls.open()
         cls.__groups = [group for group in cls.__groups if group.id != id]
         cls.save()
         
     @classmethod
     def update_group(cls, id: int, group: Group):
+        cls.open()
         for i in range(len(cls.__groups)):
             if cls.__groups[i].id == id:
                 cls.__groups[i] = group
@@ -154,6 +165,7 @@ class Groups:
 
     @classmethod
     def get_group_by_id(cls, id: int):
+        cls.open()
         for group in cls.__groups:
             if group.id == id:
                 return group
