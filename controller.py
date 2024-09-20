@@ -85,16 +85,19 @@ class UI:
     def menu(cls):
         print("="*30)
         print(f"{cls.bold_yellow}O que desejas fazer?\n")
+        print(f"{cls.bold_yellow}Gerenciar CONTATOS:")
         print(f"{cls.bold_blue}[01] {cls.italic_white}Criar contato")
         print(f"{cls.bold_blue}[02] {cls.italic_white}Listar contatos")
         print(f"{cls.bold_blue}[03] {cls.italic_white}Buscar contato")
         print(f"{cls.bold_blue}[04] {cls.italic_white}Atualizar contato")
         print(f"{cls.bold_blue}[05] {cls.italic_white}Deletar contato")
+        print(f"{cls.bold_yellow}Gerenciar GRUPOS:")
         print(f"{cls.bold_blue}[06] {cls.italic_white}Inserir grupo")
         print(f"{cls.bold_blue}[07] {cls.italic_white}Listar grupos")
         print(f"{cls.bold_blue}[08] {cls.italic_white}Buscar grupo")
         print(f"{cls.bold_blue}[09] {cls.italic_white}Atualizar grupo")
         print(f"{cls.bold_blue}[10] {cls.italic_white}Deletar grupo")
+        print(f"{cls.bold_yellow}Gerenciar MEMBROS:")
         print(f"{cls.bold_blue}[11] {cls.italic_white}Inserir membro")
         print(f"{cls.bold_blue}[12] {cls.italic_white}Listar membros")
         print(f"{cls.bold_blue}[13] {cls.italic_white}Buscar membro")
@@ -104,7 +107,7 @@ class UI:
         print()
         option = input(f"{cls.bold_blue}Escreva aqui: {cls.bold_white}")
         
-        # os.system('cls' if os.name == 'nt' else 'clear')
+        os.system('cls')
         return option
                 
     @classmethod
